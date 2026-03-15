@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
 <meta charset="UTF-8">
-<title> unknow </title>
-
-<style>
-
+<title>unknow</title><style>
 body{
 margin:0;
 background:black;
@@ -29,16 +25,9 @@ transition:1s;
 text-align:center;
 text-shadow:0 0 25px #ff7aa8;
 }
-
-</style>
-</head>
-
-<body>
-
-<div id="msg"></div>
-<canvas id="c"></canvas>
-
-<script>
+</style></head>
+<body><div id="msg"></div>
+<canvas id="c"></canvas><script>
 
 const canvas=document.getElementById("c")
 const ctx=canvas.getContext("2d")
@@ -50,12 +39,9 @@ let particles=[]
 let exploded=false
 
 function heart(t){
-
 let x=16*Math.pow(Math.sin(t),3)
 let y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))
-
 return {x:x,y:y}
-
 }
 
 function createHeart(){
@@ -67,24 +53,18 @@ for(let i=0;i<1800;i++){
 let t=Math.random()*Math.PI*2
 let p=heart(t)
 
-/* กระจายเต็มพื้นที่หัวใจ */
-
 let r=Math.sqrt(Math.random())
 
 let x=p.x*r
 let y=p.y*r
 
 particles.push({
-
 bx:x*18,
 by:y*18,
-
 x:x*18,
 y:y*18,
-
 vx:0,
 vy:0
-
 })
 
 }
@@ -102,22 +82,16 @@ ctx.fillRect(0,0,canvas.width,canvas.height)
 
 time+=0.06
 
-/* heartbeat */
-
 let beat = 1 + Math.sin(time)*0.12
 
 particles.forEach(p=>{
 
 if(exploded){
-
 p.x+=p.vx
 p.y+=p.vy
-
 }else{
-
 p.x=p.bx
 p.y=p.by
-
 }
 
 let px=canvas.width/2+p.x*beat
@@ -147,15 +121,13 @@ function explode(){
 exploded=true
 
 particles.forEach(p=>{
-
 p.vx=(Math.random()-0.5)*14
 p.vy=(Math.random()-0.5)*14
-
 })
 
-const msg = document.getElementById("msg")
-msg.innerHTML = "รักเธอน้าาาา 💓"
-msg.style.opacity = 1
+const msg=document.getElementById("msg")
+msg.innerHTML="รักเธอน้าาาา 💓"
+msg.style.opacity=1
 
 }
 
@@ -164,29 +136,31 @@ function resetHeart(){
 exploded=false
 
 particles.forEach(p=>{
-
 p.x=p.bx
 p.y=p.by
 p.vx=0
 p.vy=0
-
 })
 
 document.getElementById("msg").style.opacity=0
 
 }
 
+/* ---------- CLICK ---------- */
+
 canvas.addEventListener("click",()=>{
 
-enableShake()
+requestMotionPermission()
 
 if(!exploded) explode()
 
 })
 
+/* ---------- SHAKE ---------- */
+
 let lastShake=0
 
-window.addEventListener("devicemotion",e=>{
+function handleShake(e){
 
 let a=e.accelerationIncludingGravity
 if(!a) return
@@ -198,63 +172,34 @@ if(force>35){
 let now=Date.now()
 
 if(now-lastShake>1000){
-
 resetHeart()
 lastShake=now
-
 }
 
 }
 
+}
+
+/* ---------- iOS PERMISSION ---------- */
+
+function requestMotionPermission(){
+
+if(typeof DeviceMotionEvent!=="undefined" &&
+typeof DeviceMotionEvent.requestPermission==="function"){
+
+DeviceMotionEvent.requestPermission().then(response=>{
+if(response==="granted"){
+window.addEventListener("devicemotion",handleShake)
+}
 })
 
-function enableShake(){
+}else{
 
-if (typeof DeviceMotionEvent !== "undefined" &&
-typeof DeviceMotionEvent.requestPermission === "function") {
-
-DeviceMotionEvent.requestPermission()
-.then(response => {
-
-if (response === "granted") {
-window.addEventListener("devicemotion", shakeHandler)
-}
-
-})
-.catch(console.error)
-
-} else {
-
-window.addEventListener("devicemotion", shakeHandler)
+window.addEventListener("devicemotion",handleShake)
 
 }
 
 }
 
-let lastShake = 0
-
-function shakeHandler(e){
-
-let a = e.accelerationIncludingGravity
-if(!a) return
-
-let force = Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z)
-
-if(force > 35){
-
-let now = Date.now()
-
-if(now - lastShake > 1000){
-
-resetHeart()
-lastShake = now
-
-}
-
-}
-
-}
-</script>
-
-</body>
+</script></body>
 </html>
