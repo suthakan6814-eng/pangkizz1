@@ -178,6 +178,8 @@ document.getElementById("msg").style.opacity=0
 
 canvas.addEventListener("click",()=>{
 
+enableShake()
+
 if(!exploded) explode()
 
 })
@@ -206,6 +208,52 @@ lastShake=now
 
 })
 
+function enableShake(){
+
+if (typeof DeviceMotionEvent !== "undefined" &&
+typeof DeviceMotionEvent.requestPermission === "function") {
+
+DeviceMotionEvent.requestPermission()
+.then(response => {
+
+if (response === "granted") {
+window.addEventListener("devicemotion", shakeHandler)
+}
+
+})
+.catch(console.error)
+
+} else {
+
+window.addEventListener("devicemotion", shakeHandler)
+
+}
+
+}
+
+let lastShake = 0
+
+function shakeHandler(e){
+
+let a = e.accelerationIncludingGravity
+if(!a) return
+
+let force = Math.abs(a.x)+Math.abs(a.y)+Math.abs(a.z)
+
+if(force > 35){
+
+let now = Date.now()
+
+if(now - lastShake > 1000){
+
+resetHeart()
+lastShake = now
+
+}
+
+}
+
+}
 </script>
 
 </body>
